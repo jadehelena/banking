@@ -15,15 +15,14 @@ import javax.persistence.JoinColumn
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", length = 1, discriminatorType = DiscriminatorType.STRING)
-public class Holder {
+class Holder {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id
     private String name
     private String document
 
-    @OneToOne
-    @JoinColumn(name = "account_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "holder")
     private Account account
 
     Long getId() {
@@ -44,13 +43,5 @@ public class Holder {
 
     void setDocument(String document) {
         this.document = document
-    }
-
-    Account getAccount() {
-        return this.account
-    }
-
-    Account setAccount(Account account) {
-        this.account = account;
     }
 }
