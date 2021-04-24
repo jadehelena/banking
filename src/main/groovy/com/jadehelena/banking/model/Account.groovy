@@ -15,9 +15,7 @@ class Account {
     private int number
     private int agency
     private BigDecimal balance
-    
-	@OneToMany(mappedBy = "account")
-    private List<Transaction> transactions
+
     
     @OneToOne
     @JoinColumn(name = "holder_id", referencedColumnName = "id")
@@ -49,14 +47,6 @@ class Account {
 
     void setBalance(BigDecimal balance) {
         this.balance = balance
-    }
-
-    List<Transaction> getTransactions() {
-        return transactions
-    }
-
-    void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions
     }
 
     Holder getHolder() {
