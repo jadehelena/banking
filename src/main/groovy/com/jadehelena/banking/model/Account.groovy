@@ -1,26 +1,69 @@
-package com.jadehelena.banking.model;
+package com.jadehelena.banking.model
 
-import java.math.BigDecimal;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.util.List;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.OneToMany
+import javax.persistence.OneToOne
 
 @Entity
-public class Account {
+class Account {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private int number;
-    private int agency;
-    private BigDecimal balance;
+    private Long id
+    private int number
+    private int agency
+    private BigDecimal balance
     
 	@OneToMany(mappedBy = "account")
-    private List<Transaction> transactions;
+    private List<Transaction> transactions
     
-    @OneToOne(mappedBy = "account")
-    private Holder holder;
+    @OneToOne
+    @JoinColumn(name = "holder_id", referencedColumnName = "id")
+    private Holder holder
 
+    Long getId() {
+        return id
+    }
+
+    int getNumber() {
+        return number
+    }
+
+    void setNumber(int number) {
+        this.number = number
+    }
+
+    int getAgency() {
+        return agency
+    }
+
+    void setAgency(int agency) {
+        this.agency = agency
+    }
+
+    BigDecimal getBalance() {
+        return balance
+    }
+
+    void setBalance(BigDecimal balance) {
+        this.balance = balance
+    }
+
+    List<Transaction> getTransactions() {
+        return transactions
+    }
+
+    void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions
+    }
+
+    Holder getHolder() {
+        return holder
+    }
+
+    void setHolder(Holder holder) {
+        this.holder = holder
+    }
 }
