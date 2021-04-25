@@ -1,7 +1,10 @@
 package com.jadehelena.banking.controller
 
+import com.jadehelena.banking.controller.form.PersonForm
 import com.jadehelena.banking.service.PersonService
 import com.jadehelena.banking.model.Person
+import org.springframework.http.ResponseEntity
+import org.springframework.web.util.UriComponentsBuilder
 
 import javax.transaction.Transactional
 
@@ -14,6 +17,8 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.PathVariable
+
+import javax.validation.Valid
 
 @RestController
 @RequestMapping('people')
@@ -34,19 +39,35 @@ class PersonController {
 
     @PostMapping
     @Transactional
-    Person save(@RequestBody Person person) {
+    ResponseEntity<Person> save(@RequestBody @Valid PersonForm personForm, UriComponentsBuilder uriBuilder) {
+        Person person = personForm.convertToPerson()
         personService.save(person)
+
+        URI uri = uriBuilder.path("/people/{id}").buildAndExpand(person.getId()).toUri()
+        return ResponseEntity.created(uri).body(person)
     }
 
     @PutMapping('{id}')
     @Transactional
-    Person update(@RequestBody Person person, @PathVariable long id) {
-        personService.update(person, id)
+    ResponseEntity<Person> update(@RequestBody @Valid PersonForm personForm, @PathVariable long id) {
+        Person persistedPerson = personService.findById(id)
+        if (persistedPerson != null) {
+            personService.update(personForm, id)
+            return ResponseEntity.ok(persistedPerson)
+        }
+
+        return ResponseEntity.notFound().build()
     }
 
     @DeleteMapping('{id}')
-    Person deleteById(@PathVariable long id) {
-        personService.deleteById(id)
+    ResponseEntity<Person> deleteById(@PathVariable long id) {
+        Person persistedPerson = personService.findById(id)
+        if (persistedPerson != null) {
+            personService.deleteById(id)
+            return ResponseEntity.ok().build()
+        }
+
+        return ResponseEntity.notFound().build()
     }
 
 }

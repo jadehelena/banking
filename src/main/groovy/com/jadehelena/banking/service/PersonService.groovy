@@ -1,5 +1,6 @@
 package com.jadehelena.banking.service
 
+import com.jadehelena.banking.controller.form.PersonForm
 import com.jadehelena.banking.model.Person
 import com.jadehelena.banking.repository.PersonRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,13 +31,13 @@ class PersonService {
         personRepository.save(person)
     }
 
-    def update(Person person, long id) {
+    def update(PersonForm personForm, long id) {
         Person persistedPerson = findByIdOrError(id)
 
         persistedPerson.with {
-            name = person.name
-            lastname = person.lastname
-            document = person.document
+            name = personForm.name
+            lastname = personForm.lastname
+            document = personForm.document
         }
 
         personRepository.save(persistedPerson)

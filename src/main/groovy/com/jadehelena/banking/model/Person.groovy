@@ -5,8 +5,14 @@ import javax.persistence.Entity
 
 @Entity
 @DiscriminatorValue("F")
-public class Person extends Holder {
+class Person extends Holder {
     private String lastname
+
+    Person(String name, String lastname, String document) {
+        this.name = name
+        this.lastname = lastname
+        this.document = document
+    }
 
     String getLastname() {
         return this.lastname
