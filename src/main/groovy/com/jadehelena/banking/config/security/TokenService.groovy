@@ -26,4 +26,18 @@ class TokenService {
         .signWith(SignatureAlgorithm.HS256, secretPassword)
         .compact()
     }
+
+    boolean isTokenValid(String token) {
+        try {
+            Jwts.parser().setSigningKey(this.secretPassword).parseClaimsJws(token)
+            return true
+        } catch (Exception e) {
+            return false
+        }
+    }
+
+    Long getUserId(String token) {
+        Claims claims = Jwts.parser().setSigningKey(this.secretPassword).parseClaimsJws(token).getBody()
+        return Long.parseLong(claims.getSubject())
+    }
 }
