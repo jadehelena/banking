@@ -14,6 +14,10 @@ class Person extends Holder {
         this.document = document
     }
 
+    Person() {
+
+    }
+
     String getLastname() {
         return this.lastname
     }

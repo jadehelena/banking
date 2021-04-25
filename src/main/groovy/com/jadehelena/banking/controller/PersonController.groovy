@@ -1,8 +1,11 @@
 package com.jadehelena.banking.controller
 
+import com.jadehelena.banking.controller.dto.ExceptionDto
+import com.jadehelena.banking.controller.exception.PersonHasActiveAccountException
 import com.jadehelena.banking.controller.form.PersonForm
 import com.jadehelena.banking.service.PersonService
 import com.jadehelena.banking.model.Person
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -61,10 +64,14 @@ class PersonController {
 
     @DeleteMapping('{id}')
     ResponseEntity<Person> deleteById(@PathVariable long id) {
-        Person persistedPerson = personService.findById(id)
-        if (persistedPerson != null) {
-            personService.deleteById(id)
-            return ResponseEntity.ok().build()
+        try {
+            Person persistedPerson = personService.findById(id)
+            if (persistedPerson != null) {
+                personService.deleteById(id)
+                return ResponseEntity.ok().build()
+            }
+        } catch (PersonHasActiveAccountException exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDto(exception.getMessage()))
         }
 
         return ResponseEntity.notFound().build()
