@@ -1,15 +1,11 @@
 package com.jadehelena.banking.service
 
-import com.jadehelena.banking.controller.exception.PersonHasActiveAccountException
 import com.jadehelena.banking.controller.form.PersonForm
-import com.jadehelena.banking.model.Account
 import com.jadehelena.banking.model.Person
-import com.jadehelena.banking.repository.AccountRepository
 import com.jadehelena.banking.repository.PersonRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.data.domain.Sort
-import javax.persistence.EntityNotFoundException
 
 @Service
 class PersonService {
@@ -17,7 +13,7 @@ class PersonService {
     PersonRepository personRepository
 
     @Autowired
-    AccountRepository accountRepository
+    AccountService accountService
 
     List findAll() {
         personRepository.findAll(Sort.by('name')).asList()
@@ -27,18 +23,12 @@ class PersonService {
         personRepository.findById(id).orElse(null)
     }
 
-    Person findByIdOrError(long id) {
-        personRepository.findById(id).orElseThrow({
-            new EntityNotFoundException()
-        })
-    }
-
     def save(Person person){
         personRepository.save(person)
     }
 
     def update(PersonForm personForm, long id) {
-        Person persistedPerson = findByIdOrError(id)
+        Person persistedPerson = findById(id)
 
         persistedPerson.with {
             name = personForm.name
@@ -50,19 +40,11 @@ class PersonService {
     }
 
     def deleteById(long id) {
-        throwErrorIfPersonHasAccount(id)
+        accountService.validatesIfHolderHasAccount(id)
 
-        Person person = findByIdOrError(id)
+        Person person = findById(id)
         personRepository.delete(person)
         person
-    }
-
-    private def throwErrorIfPersonHasAccount(holderId) {
-        Account account = accountRepository.findByHolderId(holderId)
-
-        if(account != null) {
-            throw new PersonHasActiveAccountException()
-        }
     }
 
 }

@@ -1,5 +1,8 @@
 package com.jadehelena.banking.model
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo
+import com.fasterxml.jackson.annotation.ObjectIdGenerators
+
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -10,11 +13,17 @@ import javax.persistence.InheritanceType
 import javax.persistence.DiscriminatorType
 import javax.persistence.OneToOne
 import javax.persistence.JoinColumn
+import javax.persistence.Table
+import javax.persistence.UniqueConstraint
 
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", length = 1, discriminatorType = DiscriminatorType.STRING)
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "document", name = "document"))
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 class Holder {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,5 +52,13 @@ class Holder {
 
     void setDocument(String document) {
         this.document = document
+    }
+
+    Account getAccount() {
+        return account
+    }
+
+    void setAccount(Account account) {
+        this.account = account
     }
 }

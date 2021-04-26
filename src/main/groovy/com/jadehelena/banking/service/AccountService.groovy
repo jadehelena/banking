@@ -1,5 +1,6 @@
 package com.jadehelena.banking.service
 
+import com.jadehelena.banking.controller.exception.PersonHasActiveAccountException
 import com.jadehelena.banking.model.Account
 import com.jadehelena.banking.repository.AccountRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,7 +25,7 @@ class AccountService {
     }
 
     def save(Account account){
-        validatesIfHolderHasAccount(account)
+        validatesIfHolderHasAccount(account?.holder.getId())
 
         account.setNumber(generateAccountNumber())
         account.setAgency(101)
@@ -47,20 +48,16 @@ class AccountService {
     }
 
     private int generateAccountNumber() {
-        try {
-            SecureRandom secureRandomGenerator = SecureRandom.getInstance("SHA1PRNG", "SUN")
-            int randomNumber = secureRandomGenerator.nextInt(9999999 - 00000001) + 00000001
+        SecureRandom secureRandomGenerator = SecureRandom.getInstance("SHA1PRNG", "SUN")
+        int randomNumber = secureRandomGenerator.nextInt(9999999 - 00000001) + 00000001
 
-            return randomNumber
-        } catch (Exception e) {
-            //TODO: handle exception
-        }
+        return randomNumber
     }
 
-    private def validatesIfHolderHasAccount(account){
-        def persistedAccount = accountRepository.findByHolderId(account?.holder.getId())
+    private def validatesIfHolderHasAccount(Long id){
+        def persistedAccount = accountRepository.findByHolderId(id)
         if(persistedAccount){
-            throw new RuntimeException("Holder already has an account")
+            throw new PersonHasActiveAccountException()
         }
     }
 

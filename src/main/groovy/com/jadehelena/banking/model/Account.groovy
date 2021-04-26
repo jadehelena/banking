@@ -1,5 +1,8 @@
 package com.jadehelena.banking.model
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo
+import com.fasterxml.jackson.annotation.ObjectIdGenerators
+
 import javax.persistence.JoinColumn
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
@@ -9,6 +12,9 @@ import javax.persistence.OneToMany
 import javax.persistence.OneToOne
 
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 class Account {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id
@@ -16,7 +22,12 @@ class Account {
     private int agency
     private BigDecimal balance
 
-    
+    Account() {
+    }
+
+    Account(Holder holder) {
+        this.holder = holder
+    }
     @OneToOne
     @JoinColumn(name = "holder_id", referencedColumnName = "id")
     private Holder holder

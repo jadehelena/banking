@@ -36,8 +36,13 @@ class PersonController {
     }
 
     @GetMapping('{id}')
-    Person findOne(@PathVariable long id) {
-        personService.findById(id)
+    ResponseEntity<Person> findOne(@PathVariable long id) {
+        Person persistedPerson = personService.findById(id)
+        if (persistedPerson != null) {
+            return ResponseEntity.ok(persistedPerson)
+        }
+
+        return ResponseEntity.notFound().build()
     }
 
     @PostMapping
