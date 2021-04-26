@@ -25,7 +25,7 @@ class AccountService {
     }
 
     def save(Account account){
-        validatesIfHolderHasAccount(account?.holder.getId())
+        validatesIfHolderDoesntHaveAccount(account?.holder.getId())
 
         account.setNumber(generateAccountNumber())
         account.setAgency(101)
@@ -47,18 +47,19 @@ class AccountService {
         account
     }
 
-    private int generateAccountNumber() {
+    int generateAccountNumber() {
         SecureRandom secureRandomGenerator = SecureRandom.getInstance("SHA1PRNG", "SUN")
         int randomNumber = secureRandomGenerator.nextInt(9999999 - 00000001) + 00000001
 
         return randomNumber
     }
 
-    private def validatesIfHolderHasAccount(Long id){
+    private def validatesIfHolderDoesntHaveAccount(Long id){
         def persistedAccount = accountRepository.findByHolderId(id)
         if(persistedAccount){
             throw new PersonHasActiveAccountException()
         }
+        true
     }
 
 }

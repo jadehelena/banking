@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+
 import static org.assertj.core.api.Assertions.assertThat
 
 @SpringBootTest
-class PersonServiceTest {
-
+class AccountServiceTest {
     @Autowired
     PersonService personService
 
@@ -19,25 +19,30 @@ class PersonServiceTest {
     AccountService accountService
 
     @Test
-    void givenCheckingIfPersonCanBeDeleted_whenItHaveAccount_thenItShouldRaiseError() {
-        Person person = new Person("Maria", "Joana", "92382463789")
+    void givenCreatingAccount_whenHolderAlreadyHasAccount_thenItShouldRaiseError() {
+        Person person = new Person("Lucas", "Nogueira", "83245678932")
         personService.save(person)
 
         Account account = new Account(person)
         accountService.save(account)
 
         Assertions.assertThrows(PersonHasActiveAccountException.class, { ->
-            personService.deleteById(person.getId())
+            accountService.validatesIfHolderDoesntHaveAccount(person.getId())
         })
     }
 
     @Test
-    void givenCheckingIfPersonCanBeDeleted_whenItDoesntHaveAccount_thenItShouldBeDeleted() {
-        Person person = new Person("Helena", "da Silva", "82457629012")
+    void givenCreatingAccount_whenHolderDoesntHasAccount_thenItShouldReturnFalse() {
+        Person person = new Person("Nate", "Test", "9321457892")
         personService.save(person)
 
-        personService.deleteById(person.getId())
+        assertThat(accountService.validatesIfHolderDoesntHaveAccount(person.getId())).isEqualTo(true)
+    }
 
-        assertThat(personService.findById(person.getId())).isNull()
+    @Test
+    void whenGeneratingRandomNumbers_thenItShouldReturnPositiveNumbers() {
+        int randomAccountNumber = accountService.generateAccountNumber()
+
+        assertThat(randomAccountNumber).isPositive()
     }
 }

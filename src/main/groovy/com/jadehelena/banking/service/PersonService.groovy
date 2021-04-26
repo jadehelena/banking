@@ -40,7 +40,7 @@ class PersonService {
     }
 
     def deleteById(long id) {
-        accountService.validatesIfHolderHasAccount(id)
+        accountService.validatesIfHolderDoesntHaveAccount(id)
 
         Person person = findById(id)
         personRepository.delete(person)
