@@ -1,5 +1,14 @@
 package com.jadehelena.banking.model
 
+import com.fasterxml.jackson.annotation.JsonBackReference
+import org.hibernate.annotations.CreationTimestamp
+
+import javax.persistence.Column
+import javax.persistence.JoinColumn
+import javax.validation.constraints.Digits
+import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.Positive
 import java.time.LocalDateTime
 
 import javax.persistence.Entity
@@ -10,18 +19,37 @@ import javax.persistence.ManyToOne
 
 @Entity
 class Transaction {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id
+
+    @NotNull @Positive @Digits(integer=6, fraction=2)
     private BigDecimal value
+
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt
+
+    @NotNull @NotEmpty
     private String type
 
     @ManyToOne
-	private Account to_account
+    @JoinColumn(name = "origin_account_id")
+    @JsonBackReference("originAccount")
+    private Account originAccount
 
     @ManyToOne
-    private Account from_account
+    @JoinColumn(name = "target_account_id")
+    @JsonBackReference("targetAccount")
+    private Account targetAccount
 
+    enum transactType {
+        DEPOSIT,
+        TRANSFER
+    }
+
+    Transaction() {
+    }
 
     Long getId() {
         return id
@@ -43,20 +71,20 @@ class Transaction {
         this.createdAt = createdAt
     }
 
-    Account getToAccount() {
-        return to_account
+    Account getOriginAccount() {
+        return originAccount
     }
 
-    void setToAccount(Account to_account) {
-        this.to_account = to_account
+    void setOriginAccount(Account originAccount) {
+        this.originAccount = originAccount
     }
 
-    Account getFromAccount() {
-        return from_account
+    Account getTargetAccount() {
+        return targetAccount
     }
 
-    void setFromAccount(Account from_account) {
-        this.from_account = from_account
+    void setTargetAccount(Account targetAccount) {
+        this.targetAccount = targetAccount
     }
 
     String getType() {

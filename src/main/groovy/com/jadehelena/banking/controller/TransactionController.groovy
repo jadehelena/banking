@@ -1,5 +1,6 @@
 package com.jadehelena.banking.controller
 
+import com.jadehelena.banking.controller.dto.ExceptionDto
 import com.jadehelena.banking.model.Transaction
 import com.jadehelena.banking.service.TransactionService
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 import javax.transaction.Transactional
+import javax.validation.Valid
 
 @RestController
 @RequestMapping('transactions')
@@ -28,16 +30,16 @@ class TransactionController {
 
     @PostMapping
     @Transactional
-    ResponseEntity<Transaction> save(@RequestBody Transaction transaction, UriComponentsBuilder uriBuilder) {
+    ResponseEntity<Transaction> save(@RequestBody @Valid Transaction transaction, UriComponentsBuilder uriBuilder) {
         try{
             transactionService.save(transaction)
 
             URI uri = uriBuilder.path("/transactions/{id}").buildAndExpand(transaction.getId()).toUri()
-            return ResponseEntity.created(uri).body(transaction)
-        } catch (RuntimeException e) {
+            return ResponseEntity.created(uri).build()
+        } catch (IllegalArgumentException exception) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(e.message)
+                    .body(new ExceptionDto(exception.getMessage()))
         }
     }
 }
