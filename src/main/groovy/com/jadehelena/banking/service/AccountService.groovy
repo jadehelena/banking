@@ -1,11 +1,10 @@
 package com.jadehelena.banking.service
 
-import com.jadehelena.banking.controller.exception.PersonHasActiveAccountException
+import com.jadehelena.banking.exception.PersonHasActiveAccountException
 import com.jadehelena.banking.model.Account
 import com.jadehelena.banking.repository.AccountRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import javax.persistence.EntityNotFoundException
 import java.security.SecureRandom
 
 @Service
@@ -20,7 +19,7 @@ class AccountService {
 
     Account findByIdOrError(long id) {
         accountRepository.findById(id).orElseThrow({
-            new EntityNotFoundException()
+            new IllegalArgumentException("Account #${id} does not exists")
         })
     }
 
@@ -33,16 +32,16 @@ class AccountService {
         accountRepository.save(account)
     }
 
-    def updateBalance(BigDecimal new_balance, long id) {
-        Account persistedAccount = findByIdOrError(id)
+    def updateBalance(BigDecimal newBalance, long id) {
+        Account persistedAccount = findById(id)
 
-        persistedAccount.setBalance(persistedAccount.balance + new_balance)
+        persistedAccount.setBalance(persistedAccount.balance + newBalance)
 
         accountRepository.save(persistedAccount)
     }
 
     def deleteById(long id) {
-        Account account = findByIdOrError(id)
+        Account account = findById(id)
         accountRepository.delete(account)
         account
     }

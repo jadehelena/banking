@@ -28,9 +28,16 @@ class Account {
     Account(Holder holder) {
         this.holder = holder
     }
+
     @OneToOne
     @JoinColumn(name = "holder_id", referencedColumnName = "id")
     private Holder holder
+
+    @OneToMany(mappedBy = "originAccount")
+    List<Transaction> getTransfers() { }
+
+    @OneToMany(mappedBy = "targetAccount")
+    List<Transaction> getDeposits() { }
 
     Long getId() {
         return id
@@ -52,12 +59,12 @@ class Account {
         this.agency = agency
     }
 
-    BigDecimal getBalance() {
-        return balance
-    }
-
     void setBalance(BigDecimal balance) {
         this.balance = balance
+    }
+
+    BigDecimal getBalance() {
+        return balance
     }
 
     Holder getHolder() {

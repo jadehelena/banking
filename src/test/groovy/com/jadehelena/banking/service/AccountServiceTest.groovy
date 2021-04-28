@@ -1,6 +1,6 @@
 package com.jadehelena.banking.service
 
-import com.jadehelena.banking.controller.exception.PersonHasActiveAccountException
+import com.jadehelena.banking.exception.PersonHasActiveAccountException
 import com.jadehelena.banking.model.Account
 import com.jadehelena.banking.model.Person
 import org.junit.jupiter.api.Assertions
