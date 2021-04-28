@@ -48,11 +48,17 @@ class PersonController {
     @PostMapping
     @Transactional
     ResponseEntity<Person> save(@RequestBody @Valid PersonForm personForm, UriComponentsBuilder uriBuilder) {
-        Person person = personForm.convertToPerson()
-        personService.save(person)
+        try {
+            Person person = personForm.convertToPerson()
+            personService.save(person)
 
-        URI uri = uriBuilder.path("/people/{id}").buildAndExpand(person.getId()).toUri()
-        return ResponseEntity.created(uri).body(person)
+            URI uri = uriBuilder.path("/people/{id}").buildAndExpand(person.getId()).toUri()
+            return ResponseEntity.created(uri).body(person)
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ExceptionDto(exception.getMessage()))
+        }
     }
 
     @PutMapping('{id}')

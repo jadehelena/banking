@@ -1,8 +1,8 @@
-package com.jadehelena.banking.repository;
+package com.jadehelena.banking.repository
 
-import com.jadehelena.banking.model.Person;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.jadehelena.banking.model.Person
+import org.springframework.data.jpa.repository.JpaRepository
 
-public interface PersonRepository extends JpaRepository<Person, Long>  {
-    
+interface PersonRepository extends JpaRepository<Person, Long>  {
+    Person findByDocument(String document)
 }

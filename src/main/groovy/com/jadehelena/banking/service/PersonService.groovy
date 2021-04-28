@@ -24,6 +24,11 @@ class PersonService {
     }
 
     def save(Person person){
+        def persistedPerson = personRepository.findByDocument(person.getDocument())
+        if(persistedPerson != null) {
+            throw new IllegalArgumentException("This document is already registered")
+        }
+
         personRepository.save(person)
     }
 
