@@ -1,7 +1,7 @@
 package com.jadehelena.banking.controller
 
 import com.jadehelena.banking.controller.dto.ExceptionDto
-import com.jadehelena.banking.controller.exception.PersonHasActiveAccountException
+import com.jadehelena.banking.exception.PersonHasActiveAccountException
 import com.jadehelena.banking.controller.form.PersonForm
 import com.jadehelena.banking.service.PersonService
 import com.jadehelena.banking.model.Person
@@ -76,7 +76,9 @@ class PersonController {
                 return ResponseEntity.ok().build()
             }
         } catch (PersonHasActiveAccountException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDto(exception.getMessage()))
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ExceptionDto(exception.getMessage()))
         }
 
         return ResponseEntity.notFound().build()

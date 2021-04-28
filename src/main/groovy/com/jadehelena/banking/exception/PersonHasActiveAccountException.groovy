@@ -1,4 +1,4 @@
-package com.jadehelena.banking.controller.exception
+package com.jadehelena.banking.exception
 
 class PersonHasActiveAccountException extends Exception{
 
